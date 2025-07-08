@@ -8,17 +8,7 @@ Traditional function calling requires multiple back‑and‑forth trips between 
 In this demo, we:
 1. **Fetch competitor pricing** from remote MCP servers.
 2. **Web‑search alternative vendor prices**.
-3. **Analyze internal sales data** using Code Interpreter.
-4. **Generate a consolidated pricing gap report**.
-
-## Use Cases Enabled
-|**Domain**|**Example Workflow**|
-|---|---|
-|E‑commerce|Add to cart + generate Stripe checkout in one turn|
-|Dev‑ops|Fetch Sentry error → open GitHub issue|
-|Notifications|Retrieve headlines → send Twilio text|
-
-These were formerly multi-step glue code processes. With MCP, it’s streamlined.
+3. **Generate a consolidated pricing gap report**.
 
 
 ## 🔧 How MCP Works
@@ -38,31 +28,34 @@ Remote tool access is now _first-class_, eliminating backend orchestration.
 
 ### **1. Setup Tools Block**
 ```
-"tools": [
-  {
-    "type": "mcp",
-    "server_url": "https://www.aloyoga.com/api/mcp",
-    "server_label": "aloyoga",
-    "allowed_tools": ["search_shop_catalog","get_product_details"],
-    "require_approval": "never"
-  },
-  {
-    "type": "web_search_preview",
-    "user_location": { "type":"approximate","country":"US" },
-    "search_context_size": "medium"
-  },
-  {
-    "type": "code_interpreter",
-    "container": { "type":"auto", "file_ids": ["<uploaded‑sales‑CSV‑ID>"] }
-  }
+TOOLS = [
+    {
+        "type": "web_search_preview",
+        "user_location": {
+            "type": "approximate",
+            "country": "US"
+        },
+        "search_context_size": "medium"
+    },
+    {"type": "code_interpreter",
+    "container": {"type": "auto"}},
+    {
+        "type": "mcp",
+        "server_url": "https://www.aloyoga.com/api/mcp",
+        "server_label": "aloyoga",
+        "allowed_tools": [
+            "search_shop_catalog",
+            "get_product_details"
+        ],
+        "require_approval": "never"
+    }
 ]
 ```
 ### **2. System Prompt**
 Describe tasks:
 - Use MCP server for Alo Yoga pricing.
 - Use web search for Uniqlo pricing.
-- Analyze sales CSV via code interpreter.
-- Report pricing gaps ≥15%.
+- Analyze pricing gaps with code interpreter.
 
 ### **3. Sample MCP & Search Flow**
 ```
